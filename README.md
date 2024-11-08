@@ -4,8 +4,10 @@
 3. White square = player
 4. Player moves with arrow keys
    
-**COMPILING AND RUNNING**
-**---------------------**
+**COMPILING AND RUNNING**\n
+
+**---------------------**\n
+
 make
 ./play
 
