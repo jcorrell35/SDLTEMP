@@ -2,22 +2,38 @@
 #include <SDL2/SDL.h>
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-#define FRAMES 30
 
-int game_is_running = 0;
+#define FRAMES 30
+#define WINDOW_SIZE 800
+
+int game_is_running; 
+
 struct game_object{
     int x;
     int y;
-    int width;
-    int height;
+    int size;
+    int vx;
+    int vy;
+    int speed;
 }player;
+
+void setup(){
+    game_is_running=1;
+    player.x = 40;
+    player.y = 40;
+    player.size = 40;
+    player.vx=0;
+    player.vy=0;
+    player.speed=5;
+}
+
 void initialize_window(){
     SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("Game Window",	//window title
+    window = SDL_CreateWindow("BEST GAME EVER",	//window title
                        0,				//initial x position
                        0,				//initial y position
-                       640,				//width (pixels)	
-                       480,				//height (pixels)
+                       WINDOW_SIZE,				//width (pixels)	
+                       WINDOW_SIZE,				//height (pixels)
                          0);				//flags
     //RENDER SETUP
     renderer = SDL_CreateRenderer(window, -1, 0); 
@@ -39,16 +55,16 @@ void handle_input(){
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym){
                     case SDLK_LEFT:
-                        printf("LEFT");
+                        player.vx=-player.speed;
                         break;
                     case SDLK_RIGHT:
-                        printf("RIGHT");
+                        player.vx=player.speed;
                         break;
                     case SDLK_UP:
-                        printf("UP");
+                        player.vy=-player.speed;
                         break;
                     case SDLK_DOWN:
-                        printf("DOWN");
+                        player.vy=player.speed;
                         break;
                     default:
                         break;
@@ -57,16 +73,16 @@ void handle_input(){
             case SDL_KEYUP:
                 switch(event.key.keysym.sym){
                     case SDLK_LEFT:
-                        printf("LEFT");
+                        if(player.vx<0){player.vx=0;}
                         break;
                     case SDLK_RIGHT:
-                        printf("RIGHT");
+                        if(player.vx>1){player.vx=0;}
                         break;
                     case SDLK_UP:
-                        printf("UP");
+                        if(player.vy<0){player.vy=0;}
                         break;
                     case SDLK_DOWN:
-                        printf("DOWN");
+                        if(player.vy>0){player.vy=0;}
                         break;
                     default:
                         break;
@@ -77,29 +93,36 @@ void handle_input(){
         }
     }
 }
-void update(){
 
+void update(){
+    player.x=player.x+player.vx;
+    player.y=player.y+player.vy;
 }
-int main(int argc, char *argv[]){
-    game_is_running = 1;
-    initialize_window();
-    
+
+void render(){
+    SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    SDL_Rect rect = {220,140,200,200};  
+    SDL_Rect rect = {player.x,player.y,player.size,player.size};  
     SDL_RenderFillRect(renderer ,&rect);	
     SDL_RenderPresent(renderer);
- 
+}
+
+int main(int argc, char *argv[]){
+    game_is_running = 1;
+
+    setup(); 
+    initialize_window();
+
     //GAME LOOP
     while (game_is_running == 1) {
         handle_input();
         update();
-        //UPDATE GAME
-        //RENDER
+        render();
         SDL_Delay(1000/FRAMES);
     }
+
     destroy_window(); 
     return 0;
 }
