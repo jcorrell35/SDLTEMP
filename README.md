@@ -5,6 +5,7 @@
 4. Player moves with arrow keys
    
 -**COMPILING AND RUNNING**-
+
 _**_____________________** _
 
 make
